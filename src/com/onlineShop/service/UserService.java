@@ -33,4 +33,17 @@ public class UserService {
 		}
 	}
 
+	//查询用户名是否存在
+	public Boolean checkUsername(String username) {
+		UserDao dao = new UserDao();
+		Long row = 0L;
+		try {
+			row = dao.checkUsername(username);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return row==1?true:false;
+	}
+
 }

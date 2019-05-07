@@ -3,6 +3,7 @@ package com.onlineShop.dao;
 import java.sql.SQLException;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.tomcat.jdbc.pool.DataSource;
 
 import com.onlineShop.domain.User;
@@ -26,6 +27,15 @@ public class UserDao {
 		String sql = "update user set state = 1 where code =?";
 		int update = runner.update(sql,activeCode);
 //		System.out.println("update = " + update);
+	}
+
+	//查询用户名的行数
+	public Long checkUsername(String username) throws SQLException {
+		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
+		String sql = "select count(*) from user where username=?";
+		Long query = (Long) runner.query(sql,new ScalarHandler() ,username);	//返回的值是Long型
+		System.out.println("query"+query);
+		return query;
 	}
 
 }
