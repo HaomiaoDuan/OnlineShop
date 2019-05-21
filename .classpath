@@ -23,5 +23,8 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mail.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mysql-connector-java-5.0.4-bin.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/standard.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-pool2-2.3.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jedis-2.7.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

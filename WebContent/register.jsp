@@ -69,6 +69,7 @@ font {
  
 		}
 	);
+	
 	//validate用到的是表单元素的name
 	$(function(){
 		$("#checkForm").validate({

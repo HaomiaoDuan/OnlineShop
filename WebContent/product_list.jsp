@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,6 +24,16 @@ body {
 	height: 300px;
 }
 </style>
+
+<!-- 
+	测试
+	<script >
+		$(function(){
+			alert("${productList}");
+		});
+	
+	</script>
+-->
 </head>
 
 <body>
@@ -32,169 +43,82 @@ body {
 	<jsp:include page="/header.jsp"></jsp:include>
 
 
-	<div class="row" style="width: 1210px; margin: 0 auto;">
+	<div class="row" style="width: 1270px; margin: 0 auto;">
 		<div class="col-md-12">
 			<ol class="breadcrumb">
 				<li><a href="#">首页</a></li>
 			</ol>
 		</div>
+		
+		<!-- 循环显示分类的商品图片 -->
+		<c:forEach items="${pageBean.productList}" var="product">
+			<div class="col-md-2" style="height:250px">		 <!-- 因为商品名称不同，导致高度变化，影响排版。这时候最好不用auto的高度 -->
+				<a href="${pageContext.request.contextPath}/productInfo?pid=${product.pid}&cid=${pageBean.cid}&currentPage=${pageBean.currentPage}"> <img src="${product.pimage}"
+					width="170" height="170" style="display: inline-block;">
+				</a>
+				<p>
+					<a href="${pageContext.request.contextPath}/productInfo?pid=${product.pid}&cid=${pageBean.cid}&currentPage=${pageBean.currentPage}" style='color: green'>${product.pname}</a>
+				</p>
+				<p>
+					<font color="#FF0000">商城价：&yen;${product.shop_price}</font>
+				</p>
+			</div>
+		</c:forEach>
 
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10001.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>冬瓜</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10002.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>圆白菜</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10003.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>甜玉米</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10004.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>胡萝卜</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10005.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>芹菜</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10006.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>韭菜</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10007.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>香菜</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10008.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>土豆</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10007.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>香菜</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10008.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>土豆</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10007.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>香菜</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
-		<div class="col-md-2">
-			<a href="product_info.htm"> <img src="products/1/cs10008.jpg"
-				width="170" height="170" style="display: inline-block;">
-			</a>
-			<p>
-				<a href="product_info.html" style='color: green'>土豆</a>
-			</p>
-			<p>
-				<font color="#FF0000">商城价：&yen;299.00</font>
-			</p>
-		</div>
 
 	</div>
 
 	<!--分页 -->
 	<div style="width: 380px; margin: 0 auto; margin-top: 50px;">
 		<ul class="pagination" style="text-align: center; margin-top: 10px;">
-			<li class="disabled"><a href="#" aria-label="Previous"><span
-					aria-hidden="true">&laquo;</span></a></li>
-			<li class="active"><a href="#">1</a></li>
-			<li><a href="#">2</a></li>
-			<li><a href="#">3</a></li>
-			<li><a href="#">4</a></li>
-			<li><a href="#">5</a></li>
-			<li><a href="#">6</a></li>
-			<li><a href="#">7</a></li>
-			<li><a href="#">8</a></li>
-			<li><a href="#">9</a></li>
-			<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-			</a></li>
+			
+			<!-- 按照按钮的排列顺序编写代码  -->
+			
+			<!-- 前一页 -->
+			<!-- 如果是第一页，就不变 -->
+			<c:if test="${pageBean.currentPage == 1}">
+				<li class="disabled"><a href="javascript:void(0)" aria-label="Previous"> <span aria-hidden="true">&raquo;</span> </a></li>
+			</c:if>
+			<!-- 如果不是第一页就像后跳一页 -->
+			<c:if test="${pageBean.currentPage != 1}">
+				<li><a href="${pageContext.request.contextPath}/productListByCid?currentPage=${pageBean.currentPage - 1}&cid=${pageBean.cid}"
+				 aria-label="Previous"> <span aria-hidden="true">&raquo;</span> </a></li>
+			</c:if>
+			
+			
+			<!-- 循环写出页码的按钮-->
+			<c:forEach begin="1" end="${pageBean.totalPage}"  var="page">
+				<!-- 判断如果page是当前页，就不跳 -->
+				<c:if test="${pageBean.currentPage == page}">
+					<li class="active"><a href="javascript:void(0);">${page}</a></li>	<!-- 固定写法 -->
+				</c:if>
+				<!-- 判断如果page不是当前页，则【跳页】 -->
+				<c:if test="${pageBean.currentPage != page }">
+					<li><a href="${pageContext.request.contextPath}/productListByCid?currentPage=${page}&cid=${pageBean.cid}">${page}</a></li>
+				</c:if>
+			</c:forEach>
+			
+			
+			<!-- 后一页 -->
+			<!-- 如果是最后一页，点击不跳页（或者不让点） -->
+			<c:if test="${pageBean.currentPage == pageBean.totalPage}">
+				<li class="disabled">
+					<a href="javascript:void(0);" aria-label="Next"> 
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</c:if>
+			<!-- 如果不是，可以点击跳页 -->
+			<c:if test="${pageBean.currentPage != pageBean.totalPage}">
+				<li>
+					<a href="${pageContext.request.contextPath}/productListByCid?currentPage=${pageBean.currentPage + 1}&cid=${pageBean.cid}" aria-label="Next"> 
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</c:if>
+			
+			
+
 		</ul>
 	</div>
 	<!-- 分页结束 -->
@@ -212,9 +136,14 @@ body {
 		<div style="overflow: hidden;">
 
 			<ul style="list-style: none;">
-				<li
-					style="width: 150px; height: 216; float: left; margin: 0 8px 0 0; padding: 0 18px 15px; text-align: center;"><img
-					src="products/1/cs10001.jpg" width="130px" height="130px" /></li>
+			
+				<!-- 循环显示浏览记录图片 -->
+				<c:forEach items="${historyProductList}" var="product">
+					<li style="width: 150px; height: 216; float: left; margin: 0 8px 0 0; padding: 0 18px 15px; text-align: center;">
+						<img src="${product.pimage}" width="130px" height="130px" />
+					</li>
+				</c:forEach>
+				
 			</ul>
 
 		</div>
