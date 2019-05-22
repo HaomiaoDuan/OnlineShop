@@ -81,7 +81,7 @@ body {
 						</div>
 					</div>
 					<div>
-						<a href="${pageContext.request.contextPath}/productListByCid?currentPage=${currentPage}&cid=${cid}">返回列表页面</a>
+						<a href="${pageContext.request.contextPath}/product?method=productList&currentPage=${currentPage}&cid=${cid}">返回列表页面</a>
 					</div>
 				</div>
 			</div>

@@ -73,13 +73,13 @@
 			$(function(){
 				var content = "";
  				$.post(
- 					"${pageContext.request.contextPath}/categoryList",
+ 					"${pageContext.request.contextPath}/product?method=categoryList",
  					function(data){
  						//数据格式[{"cid":"xx","cname":"yyyy"},{},{}]
  						//动态创建 <li><a href="#">${category.cname}</a></li>	
  						//【拼html命令字符串】
  						for(var i=0; i<data.length;i++){	//js写循环
- 							content += "<li><a href='${pageContext.request.contextPath}/productListByCid?cid="+data[i].cid+"'>" + data[i].cname + "</a></li>";
+ 							content += "<li><a href='${pageContext.request.contextPath}/product?method=productList&cid="+data[i].cid+"'>" + data[i].cname + "</a></li>";
  						}
  						
  						//将拼接好的<li>放到导航栏中

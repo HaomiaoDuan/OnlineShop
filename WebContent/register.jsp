@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>会员注册</title>
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
-<script src="js/jquery-1.11.3.min.js" type="text/javascript"></script>
+<script src="js/jquery-1.8.3.js" type="text/javascript"></script>
 <!-- 引入表单校验的插件  -->
 <script type="text/javascript" src="js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="js/messages_zh.js"></script>
@@ -55,7 +55,7 @@ font {
 			//异步会导致flag的值在线程之间传递，难以判断顺序，最终的值也是不确定的
 			$.ajax({
 				"async":false,
-				"url":"${pageContext.request.contextPath}/checkUsername",
+				"url":"${pageContext.request.contextPath}/user?method=checkUsername",
 				"data":{"username":value},
 				"type":"POST",
 				"dataType":"json",
@@ -76,7 +76,7 @@ font {
 			rules:{
 				"username":{
 					"required":true,
-					"isExist":true
+					"isExist":true 
 				},
 				"password":{
 					"required":true,
@@ -119,14 +119,15 @@ font {
 				}
 			}
 		});
-	})
+	}); 
 </script>
+
 </head>
 <body>
-
+	
 	<!-- 引入header.jsp -->
 	<jsp:include page="/header.jsp"></jsp:include>
-
+		
 	<div class="container"
 		style="width: 100%; background: url('image/regist_bg.jpg');">
 		<div class="row">
@@ -134,7 +135,8 @@ font {
 			<div class="col-md-8"
 				style="background: #fff; padding: 40px 80px; margin: 30px; border: 7px solid #ccc;">
 				<font>会员注册</font>USER REGISTER
-				<form class="form-horizontal" id="checkForm" style="margin-top: 5px;" action="${pageContext.request.contextPath}/register"  method="post">
+				<%-- <form class="form-horizontal" id="checkForm" style="margin-top: 5px;" action="${pageContext.request.contextPath}/user?method=register"  method="post"> --%>
+				<form class="form-horizontal" id="checkForm" style="margin-top: 5px;" action="#"  method="post">
 					<div class="form-group">
 						<label for="username" class="col-sm-2 control-label">用户名</label>
 						<div class="col-sm-6">
@@ -218,7 +220,7 @@ font {
 	</div>
 
 	<!-- 引入footer.jsp -->
-	<jsp:include page="/footer.jsp"></jsp:include>
+	<jsp:include page="/footer.jsp"></jsp:include> 
 
 </body>
 </html>
