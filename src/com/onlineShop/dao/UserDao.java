@@ -34,7 +34,7 @@ public class UserDao {
 		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
 		String sql = "select count(*) from user where username=?";
 		Long query = (Long) runner.query(sql,new ScalarHandler() ,username);	//返回的值是Long型
-		System.out.println("query"+query);
+		//System.out.println("query"+query);
 		return query;
 	}
 

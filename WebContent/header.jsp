@@ -1,9 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page import="java.util.List" %>
-<%@ page import="com.onlineShop.domain.Category" %>
-<%@ page import="com.onlineShop.service.CategoryService" %>
 <script src="js/jquery-1.11.3.min.js" type="text/javascript" ></script>
 <!DOCTYPE html>
 

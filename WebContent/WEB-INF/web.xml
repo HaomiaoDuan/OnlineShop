@@ -6,17 +6,6 @@
   </welcome-file-list>
   <servlet>
     <description></description>
-    <display-name>CheckUsernameServlet</display-name>
-    <servlet-name>CheckUsernameServlet</servlet-name>
-    <servlet-class>com.onlineShop.web.servlet.CheckUsernameServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ProductServlet</servlet-name>
-    <url-pattern>/checkUsername</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <description></description>
     <display-name>ProductServlet</display-name>
     <servlet-name>ProductServlet</servlet-name>
     <servlet-class>com.onlineShop.web.servlet.ProductServlet</servlet-class>
@@ -34,5 +23,15 @@
   <servlet-mapping>
     <servlet-name>UserServlet</servlet-name>
     <url-pattern>/user</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>BaseServlet</display-name>
+    <servlet-name>BaseServlet</servlet-name>
+    <servlet-class>com.onlineShop.web.servlet.BaseServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BaseServlet</servlet-name>
+    <url-pattern>/base</url-pattern>
   </servlet-mapping>
 </web-app>

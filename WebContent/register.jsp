@@ -126,7 +126,8 @@ font {
 <body>
 	
 	<!-- 引入header.jsp -->
-	<jsp:include page="/header.jsp"></jsp:include>
+	<!-- 这里引入的header.jsp对下面表单的验证功能有影响,原因不明 -->
+	<%-- <jsp:include page="/header.jsp"></jsp:include> --%>
 		
 	<div class="container"
 		style="width: 100%; background: url('image/regist_bg.jpg');">
@@ -135,8 +136,7 @@ font {
 			<div class="col-md-8"
 				style="background: #fff; padding: 40px 80px; margin: 30px; border: 7px solid #ccc;">
 				<font>会员注册</font>USER REGISTER
-				<%-- <form class="form-horizontal" id="checkForm" style="margin-top: 5px;" action="${pageContext.request.contextPath}/user?method=register"  method="post"> --%>
-				<form class="form-horizontal" id="checkForm" style="margin-top: 5px;" action="#"  method="post">
+				<form class="form-horizontal" id="checkForm" style="margin-top: 5px;" action="${pageContext.request.contextPath}/user?method=register"  method="post">
 					<div class="form-group">
 						<label for="username" class="col-sm-2 control-label">用户名</label>
 						<div class="col-sm-6">

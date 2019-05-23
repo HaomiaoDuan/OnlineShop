@@ -11,8 +11,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
+import com.onlineShop.domain.Cart;
+import com.onlineShop.domain.CartItem;
 import com.onlineShop.domain.Category;
 import com.onlineShop.domain.PageBean;
 import com.onlineShop.domain.Product;
@@ -22,9 +25,9 @@ import com.onlineShop.utils.JedisPoolUtils;
 
 import redis.clients.jedis.Jedis;
 
-public class ProductServlet extends HttpServlet {
+public class ProductServlet extends BaseServlet {
 
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	/*public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		//获得的请求的哪个方法的method
 		String methodName = request.getParameter("method");
@@ -50,6 +53,9 @@ public class ProductServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
+	*/
+	
+	
 	
 	//【模块中的功能是通过方法区分的】
 	
@@ -223,4 +229,89 @@ public class ProductServlet extends HttpServlet {
 		request.getRequestDispatcher("product_list.jsp").forward(request, response);
 	}
 
+	//将商品添加到购物车
+	public void addProductToCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//获得要放到购物车的商品的Pid
+		String pid = request.getParameter("pid");
+		
+		//获得该商品的购买数
+		String buyNumStr = request.getParameter("buyNum");
+		int buyNum = -1;	//校验的东西不做了
+		if(buyNumStr!=null){
+			buyNum = Integer.parseInt(buyNumStr);	
+		}
+		
+		//获得Product对象
+		ProductService service = new ProductService();
+		Product product = service.findProductByPid(pid);
+		
+		//计算小计
+		double subtotal = product.getShop_price() * buyNum * 1.0;
+		
+		//封装成CartItem
+		CartItem item = new CartItem();
+		item.setBuyNum(buyNum);
+		item.setProduct(product);
+		item.setSubtotal(subtotal);
+		
+		//获得购物车（没有先创建的思想）
+		HttpSession session = request.getSession();	//第一次getSession时创建，后面就一直存在了
+		Cart cart = (Cart) session.getAttribute("cart");
+		if(cart == null){
+			cart = new Cart();
+		}
+		//添加商品
+		//需要先判断购物车是否已经包含此购物项了,再分别处理（逻辑判断在外部进行，就不重写put方法用设计模式了）
+		if(cart.getCartItems().keySet().contains(pid)){
+			 CartItem cartItem = cart.getCartItems().get(pid);
+			 cartItem.setBuyNum(cartItem.getBuyNum() + item.getBuyNum());
+			 cartItem.setSubtotal(cartItem.getSubtotal() + item.getSubtotal());
+			 item = cartItem;
+		}
+		
+		cart.getCartItems().put(pid, item);	
+	
+		//计算总计
+		cart.setTotal(cart.getTotal() + item.getSubtotal());
+		
+		
+		//再次访问session，存入购物车对象
+		session.setAttribute("cart", cart);
+		
+		//request.getRequestDispatcher("/cart.jsp").forward(request, response);//转发
+		//这里转发不行，是因为在购物车页面，用户可能多次刷新，导致重复购买，故网址需要更新
+		response.sendRedirect("cart.jsp");	//重定向
+	}
+
+	//根据pid删除购物车的商品
+	public void delProFromCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		HttpSession session = request.getSession();
+		
+		//获取数据
+		String pid = request.getParameter("pid");
+		
+		//获取购物车对象
+		Cart cart = (Cart) session.getAttribute("cart");
+		//先重新算总计
+		cart.setTotal(cart.getTotal() - cart.getCartItems().get(pid).getSubtotal());
+		//再删除相应购物项
+		cart.getCartItems().remove(pid);
+		//更新
+		//session.setAttribute("cart", cart);	//基于引用传递的，可以不用set
+		
+		response.sendRedirect(request.getContextPath() + "/cart.jsp");
+	}
+	
+	//清空购物车
+	public void clearCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		HttpSession session = request.getSession();
+		
+		//清空购物车-- 而不是删除session，里面可能其它用户信息
+		session.removeAttribute("cart");
+		
+		response.sendRedirect(request.getContextPath() + "/cart.jsp");
+	}
+	
 }

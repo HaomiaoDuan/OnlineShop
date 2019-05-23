@@ -22,8 +22,8 @@ import com.onlineShop.service.UserService;
 import com.onlineShop.utils.CommonUtils;
 import com.onlineShop.utils.MailUtils;
 
-public class UserServlet extends HttpServlet {
-
+public class UserServlet extends BaseServlet {
+/*
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String methodName = request.getParameter("method");
 		System.out.println(methodName);
@@ -43,6 +43,9 @@ public class UserServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
+	*/
+	
+	
 	
 	//模块中的功能是通过方法区分的
 	
@@ -63,7 +66,7 @@ public class UserServlet extends HttpServlet {
 	public void checkUsername(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//获取数据
 		String username = request.getParameter("username");	//直接从json的键值对里取
-		System.out.println("username:"+username);
+		//System.out.println("username:"+username);
 		//调用业务层完成检查用户名的业务
 		UserService service = new UserService();
 		Boolean isExist = service.checkUsername(username);
