@@ -4,8 +4,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.onlineShop.dao.ProductDao;
+import com.onlineShop.domain.Order;
 import com.onlineShop.domain.PageBean;
 import com.onlineShop.domain.Product;
+import com.onlineShop.utils.DataSourceUtils;
 
 public class ProductService {
 
@@ -108,6 +110,65 @@ public class ProductService {
 			e.printStackTrace();
 		}
 		return product;
+	}
+
+	//提交清单，将订单项orderItem和订单order存到数据库中
+	public Boolean submitOrder(Order order) {
+		
+		ProductDao dao = new ProductDao();
+		Boolean isSuccess = false;
+		
+		//事务控制
+		try {
+			//1.开启事务
+			DataSourceUtils.startTransaction();
+			//2.调用dao层存储order数据的方法------2和3的顺序不能错，因为orderitem表里有oid，若是先存orderitem就找不到主表中的外键oid，会报错
+			dao.addOrders(order);
+			//3.调用dao层存储orderitem数据的方法
+			dao.addOrderItems(order);
+		} catch (Exception e) {
+			isSuccess = false;
+			e.printStackTrace();
+			try {
+				//4.回滚
+				DataSourceUtils.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}finally{
+			isSuccess = true;
+			try {
+				//5.提交
+				DataSourceUtils.commitAndRelease();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return isSuccess;
+	}
+
+	//更新order信息
+	public void updatePrderAddr(Order order) {
+		ProductDao dao = new ProductDao();
+		try {
+			dao.updatePrderAddr(order);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+
+	//更新订单状态
+	public void updateOrderState(String oid) {
+		ProductDao dao = new ProductDao();
+		try {
+			dao.updateOrderState(oid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 	}
 
 

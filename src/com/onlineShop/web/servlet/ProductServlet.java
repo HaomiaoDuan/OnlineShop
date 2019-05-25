@@ -1,10 +1,15 @@
 package com.onlineShop.web.servlet;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -13,15 +18,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import com.google.gson.Gson;
 import com.onlineShop.domain.Cart;
 import com.onlineShop.domain.CartItem;
 import com.onlineShop.domain.Category;
+import com.onlineShop.domain.Order;
+import com.onlineShop.domain.OrderItem;
 import com.onlineShop.domain.PageBean;
 import com.onlineShop.domain.Product;
+import com.onlineShop.domain.User;
 import com.onlineShop.service.CategoryService;
 import com.onlineShop.service.ProductService;
+import com.onlineShop.utils.CommonUtils;
 import com.onlineShop.utils.JedisPoolUtils;
+import com.onlineShop.utils.PaymentUtil;
 
 import redis.clients.jedis.Jedis;
 
@@ -314,4 +326,163 @@ public class ProductServlet extends BaseServlet {
 		response.sendRedirect(request.getContextPath() + "/cart.jsp");
 	}
 	
+	//提交订单到订单页面
+	public void submitOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		//获取参数
+		HttpSession session = request.getSession();
+		User user = (User)session.getAttribute("user");
+		
+		// 判断用户是否登录
+		if(user==null){
+			//没有登录
+			response.sendRedirect(request.getContextPath()+"/login.jsp");
+			return ; //后面代码不执行
+		}
+		
+		
+		//封装Order对象----安全性的判断就省略了
+		Order order = new Order();
+		Cart cart = (Cart) session.getAttribute("cart");	//cart可能为空，过了持久化时间
+		//1.订单的下单号
+		order.setOid(CommonUtils.getUUID());
+		//2.订单的下单时间
+		order.setOrdertime(new Date());
+		//3.订单的总金额
+		order.setTotal(cart.getTotal());
+		//4.订单支付状态
+		order.setState(0);	//未支付
+		//5.收获地址
+		order.setAddress(null); 	//习惯
+		//6.收货人
+		order.setName(null);
+		//7.收获人电话
+		order.setTelephone(null);
+		//8.下单的用户
+		order.setUser(user);
+		//9.订单中的订单项
+		List<OrderItem> orderItems = order.getOrderItems();
+		OrderItem orderItem = null;
+		Map<String, CartItem> cartItems = cart.getCartItems();
+		for (CartItem cartItem : cartItems.values()) {
+			orderItem = new OrderItem();
+			//1).订单项的id
+			orderItem.setItemid(CommonUtils.getUUID());
+			//2).订单项对应的订单
+			orderItem.setOrder(order);
+			//3).订单项内商品的购买数量
+			orderItem.setCount(cartItem.getBuyNum());
+			//4).订单项的商品
+			orderItem.setProduct(cartItem.getProduct());
+			//5).订单项的小计
+			orderItem.setSubtotal(cartItem.getSubtotal());
+			orderItems.add(orderItem);
+		}
+		order.setOrderItems(orderItems); 	//不是多余的
+		//order的其它参数暂时没写
+		
+		//传输数据到service层
+		ProductService service = new ProductService();
+		Boolean flag = service.submitOrder(order);	//默认成功，无返回值
+		
+		//存储session数据
+		session.setAttribute("order", order);
+		
+		//跳转页面
+		response.sendRedirect("order_info.jsp");
+		
+	}
+
+	//确认订单--更新收货人信息+在线支付
+	public void confirmOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		//中文乱码处理
+		
+		//1.获取数据并更新：可以单独获得，也可以封装
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		Order order = new Order();	//此处的order只有三项赋值了
+//		Order order = (Order) request.getAttribute("order");
+		try {
+			BeanUtils.populate(order, parameterMap); 
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ProductService service = new ProductService();
+		service.updatePrderAddr(order);
+		
+		//2.在线支付
+		//获得选择的银行
+		String pd_FrpId = request.getParameter("pd_FrpId");		//不为空
+		/*switch(pd_FrpId){
+		case "ICBC-NET-B2C":	//工商银行
+			//接入工商银行的接口
+			//....
+			break;
+		case "ABC-NET-B2C":		//农业银行
+			break;
+		case "BOCO-NET-B2C":	//交通银行
+			break;
+		case "PINGANBANK-NET":	//平安银行
+			break;
+		case "CCB-NET-B2C":		//建设银行
+			break;
+		case "CEB-NET-B2C":		//光大银行
+			break;
+		case "CMBCHINA-NET-B2C"://招商银行
+			break;
+		}*/
+		
+		//只接入一个接口，这个接口已经集成了所有银行的接口，这个接口是第三方支付平台提供的
+		//----------接入的是易宝支付----------------
+	 
+		// 获得 支付必须基本数据
+		String orderid = request.getParameter("oid");	//order_info.jsp里有
+		//String money = order.getTotal() + "";		//支付金额【存疑】
+		String money = "0.01";	//实验
+		
+		// 银行
+		//String pd_FrpId = request.getParameter("pd_FrpId");
+
+		// 发给支付公司需要哪些数据
+		String p0_Cmd = "Buy";
+		String p1_MerId = ResourceBundle.getBundle("merchantInfo").getString("p1_MerId");
+		String p2_Order = orderid;
+		String p3_Amt = money;
+		String p4_Cur = "CNY";
+		String p5_Pid = "";
+		String p6_Pcat = "";
+		String p7_Pdesc = "";
+		// 支付成功回调地址 ---- 第三方支付公司会访问、用户访问
+		// 第三方支付可以访问网址
+		String p8_Url = ResourceBundle.getBundle("merchantInfo").getString("callback");
+		String p9_SAF = "";
+		String pa_MP = "";
+		String pr_NeedResponse = "1";
+		// 加密hmac 需要密钥
+		String keyValue = ResourceBundle.getBundle("merchantInfo").getString(
+				"keyValue");
+		String hmac = PaymentUtil.buildHmac(p0_Cmd, p1_MerId, p2_Order, p3_Amt,
+				p4_Cur, p5_Pid, p6_Pcat, p7_Pdesc, p8_Url, p9_SAF, pa_MP,
+				pd_FrpId, pr_NeedResponse, keyValue);
+		
+		
+		String url = "https://www.yeepay.com/app-merchant-proxy/node?pd_FrpId="+pd_FrpId+
+						"&p0_Cmd="+p0_Cmd+
+						"&p1_MerId="+p1_MerId+
+						"&p2_Order="+p2_Order+
+						"&p3_Amt="+p3_Amt+
+						"&p4_Cur="+p4_Cur+
+						"&p5_Pid="+p5_Pid+
+						"&p6_Pcat="+p6_Pcat+
+						"&p7_Pdesc="+p7_Pdesc+
+						"&p8_Url="+p8_Url+
+						"&p9_SAF="+p9_SAF+
+						"&pa_MP="+pa_MP+
+						"&pr_NeedResponse="+pr_NeedResponse+
+						"&hmac="+hmac;
+		//重定向到第三方支付平台
+		response.sendRedirect(url);	
+	}
 }

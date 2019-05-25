@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -142,6 +143,26 @@ public class UserServlet extends BaseServlet {
 		}else{
 			//4.跳转到注册失败的页面
 			response.sendRedirect(request.getContextPath() + "/registerFail.jsp");
+		}
+	}
+	
+	//登录
+	public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//获取登录数据
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		//传数据到service层，用户确认
+		UserService service = new UserService();
+		User user = service.login(username,password);
+		if(user != null){
+			HttpSession session = request.getSession();
+			session.setAttribute("user", user);
+			response.sendRedirect("default.jsp");
+		}else{
+			String loginInfo = "用户名或密码错误！";
+			request.setAttribute("loginInfo", loginInfo);
+			request.getRequestDispatcher("login.jsp").forward(request, response);
 		}
 	}
 }

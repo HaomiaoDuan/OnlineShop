@@ -34,4 +34,14 @@
     <servlet-name>BaseServlet</servlet-name>
     <url-pattern>/base</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CallbackServlet</display-name>
+    <servlet-name>CallbackServlet</servlet-name>
+    <servlet-class>com.onlineShop.web.servlet.CallbackServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CallbackServlet</servlet-name>
+    <url-pattern>/callback</url-pattern>
+  </servlet-mapping>
 </web-app>

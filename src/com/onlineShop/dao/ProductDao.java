@@ -8,6 +8,8 @@ import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
+import com.onlineShop.domain.Order;
+import com.onlineShop.domain.OrderItem;
 import com.onlineShop.domain.Product;
 import com.onlineShop.utils.DataSourceUtils;
 
@@ -61,6 +63,40 @@ public class ProductDao {
 		String sql = "select * from product where pid = ?";
 		Product query = runner.query(sql, new BeanHandler<>(Product.class),pid);
 		return query;
+	}
+
+	//存储order数据
+	public void addOrders(Order order) throws SQLException {
+		QueryRunner runner = new QueryRunner();
+		String sql = "insert into orders values(?,?,?,?,?,?,?,?)";
+		runner.update(DataSourceUtils.getConnection(),sql,order.getOid(),
+				order.getOrdertime(),order.getTotal(),order.getState(),
+				order.getAddress(),order.getName(),order.getTelephone(),order.getUser().getUid());
+	}
+
+	//存储orderitem数据
+	public void addOrderItems(Order order) throws SQLException {
+		QueryRunner runner = new QueryRunner();
+		String sql = "insert into orderitem values(?,?,?,?,?)";
+		List<OrderItem> orderItems = order.getOrderItems();
+		for (OrderItem orderItem : orderItems) {
+			runner.update(DataSourceUtils.getConnection(), sql, orderItem.getItemid(), orderItem.getCount(),
+					orderItem.getSubtotal(), orderItem.getProduct().getPid(), order.getOid());
+		}
+	}
+
+	//存储剩余的order信息
+	public void updatePrderAddr(Order order) throws SQLException {
+		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());	//不用事务控制
+		String sql = "update orders set address=? ,name=?,telephone=? where oid=?";
+		runner.update(sql , order.getAddress(),order.getName(),order.getTelephone(),order.getOid());
+	}
+
+	//更新订单状态
+	public void updateOrderState(String oid) throws SQLException {
+		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());	//不用事务控制
+		String sql = "update orders set state=? where oid=?";
+		runner.update(sql , 1, oid);
 	}	
 
 }

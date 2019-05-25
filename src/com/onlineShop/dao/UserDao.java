@@ -3,6 +3,7 @@ package com.onlineShop.dao;
 import java.sql.SQLException;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.tomcat.jdbc.pool.DataSource;
 
@@ -36,6 +37,14 @@ public class UserDao {
 		Long query = (Long) runner.query(sql,new ScalarHandler() ,username);	//返回的值是Long型
 		//System.out.println("query"+query);
 		return query;
+	}
+
+	//登录的验证
+	public User login(String username, String password) throws SQLException {
+		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
+		String sql = "select * from user where username =? and password =?";
+		User user = (User)runner.query(sql, new BeanHandler<>(User.class), username, password);
+		return user;
 	}
 
 }
