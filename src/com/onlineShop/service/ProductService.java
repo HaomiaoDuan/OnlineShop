@@ -2,9 +2,11 @@ package com.onlineShop.service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import com.onlineShop.dao.ProductDao;
 import com.onlineShop.domain.Order;
+import com.onlineShop.domain.OrderItem;
 import com.onlineShop.domain.PageBean;
 import com.onlineShop.domain.Product;
 import com.onlineShop.utils.DataSourceUtils;
@@ -62,8 +64,8 @@ public class ProductService {
 		//2.封装当前页显示的条数 currentCount
 		pageBean.setCurrentCount(currentCount);
 		
-		//3.封装类别cid
-		pageBean.setCid(cid);
+//		//3.封装类别cid
+//		pageBean.setCid(cid);
 		
 		//（二）获取后台数据
 		ProductDao dao = new ProductDao();
@@ -94,7 +96,7 @@ public class ProductService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		pageBean.setProductList(productList);
+		pageBean.setDataList(productList);
 		
 		return pageBean;
 	}
@@ -169,6 +171,32 @@ public class ProductService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+	}
+
+	//获得指定用户的所有订单List
+	public List<Order> findAllOrders(String uid) {
+		ProductDao dao = new ProductDao();
+		List<Order> orderList = null;
+		try {
+			orderList = dao.findAllOrders(uid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return orderList;
+	}
+
+	//获得指定order的所有orderItem
+	public List<Map<String,Object>> findAllOrderItemByOid(String oid) {
+		ProductDao dao = new ProductDao();
+		List<Map<String,Object>> mapList = null;
+		try {
+			mapList = dao.findAllOrderItemByOid(oid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mapList;
 	}
 
 

@@ -51,13 +51,13 @@ body {
 		</div>
 		
 		<!-- 循环显示分类的商品图片 -->
-		<c:forEach items="${pageBean.productList}" var="product">
+		<c:forEach items="${pageBean.dataList}" var="product">
 			<div class="col-md-2" style="height:250px">		 <!-- 因为商品名称不同，导致高度变化，影响排版。这时候最好不用auto的高度 -->
-				<a href="${pageContext.request.contextPath}/product?method=productInfo&pid=${product.pid}&cid=${pageBean.cid}&currentPage=${pageBean.currentPage}"> <img src="${product.pimage}"
+				<a href="${pageContext.request.contextPath}/product?method=productInfo&pid=${product.pid}&cid=${cid}&currentPage=${pageBean.currentPage}"> <img src="${product.pimage}"
 					width="170" height="170" style="display: inline-block;">
 				</a>
 				<p>
-					<a href="${pageContext.request.contextPath}/product?method=productInfo&pid=${product.pid}&cid=${pageBean.cid}&currentPage=${pageBean.currentPage}" style='color: green'>${product.pname}</a>
+					<a href="${pageContext.request.contextPath}/product?method=productInfo&pid=${product.pid}&cid=${cid}&currentPage=${pageBean.currentPage}" style='color: green'>${product.pname}</a>
 				</p>
 				<p>
 					<font color="#FF0000">商城价：&yen;${product.shop_price}</font>
@@ -81,7 +81,7 @@ body {
 			</c:if>
 			<!-- 如果不是第一页就像后跳一页 -->
 			<c:if test="${pageBean.currentPage != 1}">
-				<li><a href="${pageContext.request.contextPath}/product?method=productList&currentPage=${pageBean.currentPage - 1}&cid=${pageBean.cid}"
+				<li><a href="${pageContext.request.contextPath}/product?method=productList&currentPage=${pageBean.currentPage - 1}&cid=${cid}"
 				 aria-label="Previous"> <span aria-hidden="true">&raquo;</span> </a></li>
 			</c:if>
 			
@@ -94,7 +94,7 @@ body {
 				</c:if>
 				<!-- 判断如果page不是当前页，则【跳页】 -->
 				<c:if test="${pageBean.currentPage != page }">
-					<li><a href="${pageContext.request.contextPath}product?method=productList&currentPage=${page}&cid=${pageBean.cid}">${page}</a></li>
+					<li><a href="${pageContext.request.contextPath}/product?method=productList&currentPage=${page}&cid=${cid}">${page}</a></li>
 				</c:if>
 			</c:forEach>
 			
@@ -111,7 +111,7 @@ body {
 			<!-- 如果不是，可以点击跳页 -->
 			<c:if test="${pageBean.currentPage != pageBean.totalPage}">
 				<li>
-					<a href="${pageContext.request.contextPath}/product?method=productList&currentPage=${pageBean.currentPage + 1}&cid=${pageBean.cid}" aria-label="Next"> 
+					<a href="${pageContext.request.contextPath}/product?method=productList&currentPage=${pageBean.currentPage + 1}&cid=${cid}" aria-label="Next"> 
 						<span aria-hidden="true">&raquo;</span>
 					</a>
 				</li>

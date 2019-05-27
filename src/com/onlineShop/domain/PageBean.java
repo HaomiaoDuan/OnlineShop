@@ -18,17 +18,17 @@ public class PageBean<T> {
 	private int totalPage;
 		
 	//5.每页显示的数据
-	private List<T> productList = new ArrayList<T>();	//泛型，增加通用性
+	private List<T> dataList = new ArrayList<T>();	//泛型，增加通用性
 	
-	//6.类别
-	private int cid;
+// 	//6.类别
+// 	private int cid;
 		
-	public int getCid() {
-		return cid;
-	}
-	public void setCid(int cid) {
-		this.cid = cid;
-	}
+// 	public int getCid() {
+// 		return cid;
+// 	}
+// 	public void setCid(int cid) {
+// 		this.cid = cid;
+// 	}
 	public int getTotalCount() {
 		return totalCount;
 	}
@@ -41,11 +41,12 @@ public class PageBean<T> {
 	public void setTotalPage(int totalPage) {
 		this.totalPage = totalPage;
 	}
-	public List<T> getProductList() {
-		return productList;
+
+	public List<T> getDataList() {
+		return dataList;
 	}
-	public void setProductList(List<T> productList) {
-		this.productList = productList;
+	public void setDataList(List<T> dataList) {
+		this.dataList = dataList;
 	}
 	public int getCurrentPage() {
 		return currentPage;

@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -217,6 +219,7 @@ public class ProductServlet extends BaseServlet {
 		
 		//选择显示的jsp，传递数据
 		request.setAttribute("pageBean", pageBean);
+		request.setAttribute("cid", cid);
 		
 		//定义一个记录历史商品信息的集合
 		List<Product> historyProductList = new ArrayList<Product>();
@@ -399,9 +402,8 @@ public class ProductServlet extends BaseServlet {
 		//中文乱码处理
 		
 		//1.获取数据并更新：可以单独获得，也可以封装
-		Map<String, String[]> parameterMap = request.getParameterMap();
-		Order order = new Order();	//此处的order只有三项赋值了
-//		Order order = (Order) request.getAttribute("order");
+		Map<String, String[]> parameterMap = request.getParameterMap();	//里面包含了oid
+		Order order = new Order();	//此处的order只有三项赋值了+oid
 		try {
 			BeanUtils.populate(order, parameterMap); 
 		} catch (IllegalAccessException | InvocationTargetException e) {
@@ -412,10 +414,14 @@ public class ProductServlet extends BaseServlet {
 		ProductService service = new ProductService();
 		service.updatePrderAddr(order);
 		
-		//2.在线支付
+		//以下功能暂时无法使用（CallbackServlet也是）,暂时用简单的页面替代了
+		service.updateOrderState(order.getOid());
+		response.sendRedirect(request.getContextPath() + "/paySuccess.jsp");
+		
+		/*//2.在线支付
 		//获得选择的银行
 		String pd_FrpId = request.getParameter("pd_FrpId");		//不为空
-		/*switch(pd_FrpId){
+		switch(pd_FrpId){
 		case "ICBC-NET-B2C":	//工商银行
 			//接入工商银行的接口
 			//....
@@ -432,7 +438,7 @@ public class ProductServlet extends BaseServlet {
 			break;
 		case "CMBCHINA-NET-B2C"://招商银行
 			break;
-		}*/
+		}
 		
 		//只接入一个接口，这个接口已经集成了所有银行的接口，这个接口是第三方支付平台提供的
 		//----------接入的是易宝支付----------------
@@ -483,6 +489,70 @@ public class ProductServlet extends BaseServlet {
 						"&pr_NeedResponse="+pr_NeedResponse+
 						"&hmac="+hmac;
 		//重定向到第三方支付平台
-		response.sendRedirect(url);	
+		response.sendRedirect(url);	*/
 	}
+	
+	
+	//获得当前用户的订单(多表查询拆成单表查询+循环)
+	public void myOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		HttpSession session = request.getSession();
+		//以下功能可以放在filter中
+		User user = (User)session.getAttribute("user");
+		//判断用户是否登录
+		if(user == null){
+			response.sendRedirect(request.getContextPath() + "/login.jsp");	//重定向是从客户端访问，还要加工程全称
+			return ; //	后面的代码不执行
+		}
+		
+		ProductService service = new ProductService();
+		//查询该用户的所有订单信息（单表查询orders表）
+		//集合中的每一个Order对象是不完整
+		List<Order> orderList = service.findAllOrders(user.getUid());
+		
+		if(orderList!=null){
+			//继续补全orderList的信息
+			for (Order order : orderList) {
+				//封装user
+				order.setUser(user);
+				//------封装orderItems和其中的Product-------
+				//mapList包括orderItem的所有信息和product的部分信息
+				//使用多表查询，就不使用循环+单表查询了
+				List<Map<String,Object>> mapList = service.findAllOrderItemByOid(order.getOid());
+				//------【mapList手动转换成orderItemList】-------
+				for (Map<String, Object> map : mapList) {
+					try {
+						//1.从map中取出count,subtotal封装到OrderItem
+						OrderItem orderItem = new OrderItem();
+						/*orderItem.setCount(Integer.parseInt(map.get("count").toString()));
+						orderItem.setSubtotal(Integer.parseInt(map.get("subtotal").toString()));*/
+						BeanUtils.populate(orderItem, map);		//工具封装，从map中找product的属性，有就封，没有就不封
+						
+						//2.从map中取出pimage,pimage和shop_price封装到product
+						Product product = new Product();
+						BeanUtils.populate(product, map);		//工具封装，从map中找product的属性，有就封，没有就不封
+						
+						//3.把product封装到orderItem
+						orderItem.setProduct(product);
+						
+						//4.把orderItem封装到order的orders
+						order.getOrderItems().add(orderItem);
+						
+					} catch (IllegalAccessException | InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+			//要用的orderList已经封装完整了
+			/*session.setAttribute("orderList", orderList);
+				response.sendRedirect(request.getContextPath() + "/order_list.jsp");*/
+			request.setAttribute("orderList", orderList);
+			request.getRequestDispatcher("/order_list.jsp").forward(request, response);
+			
+		}
+		
+	}
+	
 }

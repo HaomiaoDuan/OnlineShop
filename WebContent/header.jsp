@@ -26,7 +26,7 @@
 			</c:if>
 			
 			<li><a href="cart.jsp">购物车</a></li>
-			<li><a href="order_list.jsp">我的订单</a></li>
+			<li><a href="${pageContext.request.contextPath}/product?method=myOrders">我的订单</a></li>
 		</ol>
 	</div>
 </div>
@@ -43,7 +43,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="${pageContext.request.contextPath}">首页</a>
+				<a class="navbar-brand" href="${pageContext.request.contextPath}/product?method=index">首页</a>
 			</div>
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
