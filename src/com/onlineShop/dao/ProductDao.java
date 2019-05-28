@@ -114,9 +114,11 @@ public class ProductDao {
 	//查询oid的所有orderitem对象---多表查询(简单，但是会出现冗余信息--解决方案！) 
 	public List<Map<String,Object>> findAllOrderItemByOid(String oid) throws SQLException {
 		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());	 
-		String sql = "select i.count,i.subtotal,p.pimage,p.pname,p.shop_price from orderitem i,product p where i.pid=p.pid and i.oid=? ";
+		String sql = "select i.count,i.subtotal,p.pimage,p.pname,p.shop_price from orderitem i,"
+				+ "product p where i.pid=p.pid and i.oid=? ";
 		List<Map<String,Object>>mapList = runner.query(sql, new MapListHandler(),oid);
-		//返回的结果不是单一的OrderItem，而是OrderItem和Product的结合体数据，而没有对应实体和BeanListhandler进行封装，所以用更加灵活的MapListHandler
+		//返回的结果不是单一的OrderItem，而是OrderItem和Product的结合体数据，
+		//而没有对应实体和BeanListhandler进行封装，所以用更加灵活的MapListHandler
 		return mapList;
 	}	
 

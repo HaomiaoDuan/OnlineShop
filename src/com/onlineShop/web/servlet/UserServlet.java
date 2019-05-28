@@ -2,6 +2,7 @@ package com.onlineShop.web.servlet;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,7 +100,7 @@ public class UserServlet extends BaseServlet {
 					//将String转成Date
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 					Date parse = null;
-					try {
+					try { 
 						parse = format.parse(value.toString());
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
@@ -146,8 +148,10 @@ public class UserServlet extends BaseServlet {
 		}
 	}
 	
-	//登录
+	//自动登录
 	public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();			//放在最上面
+		request.setCharacterEncoding("UTF-8");
 		//获取登录数据
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -156,7 +160,30 @@ public class UserServlet extends BaseServlet {
 		UserService service = new UserService();
 		User user = service.login(username,password);
 		if(user != null){
-			HttpSession session = request.getSession();
+			//登录成功
+			//判断用户是否勾选自动登录
+			String autoLogin = request.getParameter("autoLogin");	//对应login.jsp设置checkbox的name
+			//System.out.println("autologin=" + autoLogin);
+			if(autoLogin!=null){
+				//【用cookie把登录信息存到本地】
+				
+				//--对中文编码--
+				String username_code = URLEncoder.encode(username,"UTF-8");
+				String password_code = URLEncoder.encode(password,"UTF-8");
+				
+				Cookie cookie_username = new Cookie("cookie_username", username_code);
+				Cookie cookie_password = new Cookie("cookie_password", password_code);
+				//设置cookie的持久化时间
+				cookie_username.setMaxAge(60*60);	//1小时
+				cookie_password.setMaxAge(60*60);
+				//设置cookie的携带路径
+				//System.out.println(request.getContextPath());
+				cookie_username.setPath(request.getContextPath());
+				cookie_password.setPath(request.getContextPath());
+				//发送cookie
+				response.addCookie(cookie_username);
+				response.addCookie(cookie_password);
+			}
 			session.setAttribute("user", user);
 			response.sendRedirect("default.jsp");
 		}else{
@@ -165,4 +192,27 @@ public class UserServlet extends BaseServlet {
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		}
 	}
+	
+	//用户注销
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//干掉session中的user
+		HttpSession session = request.getSession();
+		session.removeAttribute("user");
+		//干掉客户端中的存username和password的cookie
+		Cookie cookie_username = new Cookie("cookie_username", "");
+		Cookie cookie_password = new Cookie("cookie_password", "");
+		//设置cookie的持久化时间
+		cookie_username.setMaxAge(0);	//1小时
+		cookie_password.setMaxAge(0);
+		//设置cookie的携带路径
+		cookie_username.setPath(request.getContextPath());
+		cookie_password.setPath(request.getContextPath());
+		//发送cookie
+		response.addCookie(cookie_username);
+		response.addCookie(cookie_password);
+		
+		
+		response.sendRedirect(request.getContextPath() + "/login.jsp");
+	}
+	
 }
