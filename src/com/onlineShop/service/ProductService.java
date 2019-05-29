@@ -53,7 +53,7 @@ public class ProductService {
 	}
 
 	//获取分页信息的数据并封装成PageBean
-	public PageBean<Product> findPageBean(int currentPage, int currentCount, int cid)  {
+	public PageBean<Product> findPageBean(int currentPage, int currentCount, String cid)  {
 		
 		//(一)创建实体，封装前台数据
 		PageBean<Product> pageBean = new PageBean<>();

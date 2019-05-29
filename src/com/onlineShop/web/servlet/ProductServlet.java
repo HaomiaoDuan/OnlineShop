@@ -191,8 +191,8 @@ public class ProductServlet extends BaseServlet {
 	//根据商品的类别获取商品的列表
 	public void productList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//获取数据
-		String cidStr = request.getParameter("cid");
-		int cid = Integer.parseInt(cidStr);
+		String cid = request.getParameter("cid");
+		//int cid = Integer.parseInt(cidStr);
 				
 		
 		//分页操作(服务)，一开始模拟前台数据，不需要处理请求

@@ -63,4 +63,34 @@
     <servlet-name>FileuploadServlet2</servlet-name>
     <url-pattern>/fileupload2</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AdminServlet</display-name>
+    <servlet-name>AdminServlet</servlet-name>
+    <servlet-class>com.onlineShop.web.servlet.AdminServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdminServlet</servlet-name>
+    <url-pattern>/admin</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AdminAddProductServlet</display-name>
+    <servlet-name>AdminAddProductServlet</servlet-name>
+    <servlet-class>com.onlineShop.web.servlet.AdminAddProductServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdminAddProductServlet</servlet-name>
+    <url-pattern>/adminAddProduct</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AdminUpdateProductServlet</display-name>
+    <servlet-name>AdminUpdateProductServlet</servlet-name>
+    <servlet-class>com.onlineShop.web.servlet.AdminUpdateProductServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdminUpdateProductServlet</servlet-name>
+    <url-pattern>/adminUpdateProduct</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -53,8 +53,8 @@ body {
 		<!-- 循环显示分类的商品图片 -->
 		<c:forEach items="${pageBean.dataList}" var="product">
 			<div class="col-md-2" style="height:250px">		 <!-- 因为商品名称不同，导致高度变化，影响排版。这时候最好不用auto的高度 -->
-				<a href="${pageContext.request.contextPath}/product?method=productInfo&pid=${product.pid}&cid=${cid}&currentPage=${pageBean.currentPage}"> <img src="${product.pimage}"
-					width="170" height="170" style="display: inline-block;">
+				<a href="${pageContext.request.contextPath}/product?method=productInfo&pid=${product.pid}&cid=${cid}&currentPage=${pageBean.currentPage}"> 
+				<img src="${pageContext.request.contextPath}/${product.pimage}" width="170" height="170" style="display: inline-block;">
 				</a>
 				<p>
 					<a href="${pageContext.request.contextPath}/product?method=productInfo&pid=${product.pid}&cid=${cid}&currentPage=${pageBean.currentPage}" style='color: green'>${product.pname}</a>
@@ -140,7 +140,7 @@ body {
 				<!-- 循环显示浏览记录图片 -->
 				<c:forEach items="${historyProductList}" var="product">
 					<li style="width: 150px; height: 216; float: left; margin: 0 8px 0 0; padding: 0 18px 15px; text-align: center;">
-						<img src="${product.pimage}" width="130px" height="130px" />
+						<img src="${pageContext.request.contextPath}/${product.pimage}" width="130px" height="130px" />
 					</li>
 				</c:forEach>
 				

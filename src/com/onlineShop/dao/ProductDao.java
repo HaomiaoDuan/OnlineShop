@@ -44,7 +44,7 @@ public class ProductDao {
 	}
 
 	//获取分页信息之总条数
-	public int getTotalCount(int cid) throws SQLException {
+	public int getTotalCount(String cid) throws SQLException {
 		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
 		String sql = "select count(*) from product where cid =?";
 		Long query = (Long)runner.query(sql, new ScalarHandler(),cid);	//标量其实是Long型
@@ -52,7 +52,7 @@ public class ProductDao {
 	}
 
 	//获取分页信息之商品数据
-	public List<Product> findProductListForPageBean(int index, int currentCount, int cid) throws SQLException {
+	public List<Product> findProductListForPageBean(int index, int currentCount, String cid) throws SQLException {
 		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
 		String sql = "select * from product where cid =? limit ?,?";
 		List<Product> query = runner.query(sql, new BeanListHandler<Product>(Product.class),cid,index,currentCount);

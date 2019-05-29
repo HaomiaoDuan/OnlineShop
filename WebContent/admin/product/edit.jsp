@@ -1,14 +1,35 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <HTML>
 	<HEAD>
 		<meta http-equiv="Content-Language" content="zh-cn">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<LINK href="${pageContext.request.contextPath}/css/Style1.css" type="text/css" rel="stylesheet">
+		
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.11.3.min.js"></script>
+		
+		<!-- JS完成给下拉菜单select的option选中的功能 -->
+		<script type="text/javascript">
+		 
+			$(function(){
+				// alert();//测试一下jQ引入的是否成功
+				var cid = "${product.category.cid}";
+				//设置被选中的类别项
+				$("#cid option[value='${product.category.cid}']").prop("selected",true);			//jQ + EL语句
+					
+				//设置被选中是否热门项
+				$("#is_hot option[value='${product.is_hot}']").prop("selected",true);	
+			});
+		</script> 
 	</HEAD>
 	
 	<body>
 		<!--  -->
-		<form id="userAction_save_do" name="Form1" action="${pageContext.request.contextPath}/adminProduct_update.action" method="post" enctype="multipart/form-data">
+		<form id="userAction_save_do" name="Form1" action="${pageContext.request.contextPath}/adminUpdateProduct" method="post" enctype="multipart/form-data">
+			
+			<input type="hidden" name="pid" value="${product.pid} ">
+			
+			<input type="hidden" name="pimage" value="${product.pimage} ">
 			
 			<table cellSpacing="1" cellPadding="5" width="100%" align="center" bgColor="#eeeeee" style="border: 1px solid #8ba7e3" border="0">
 				<tr>
@@ -24,14 +45,14 @@
 						商品名称：
 					</td>
 					<td class="ta_01" bgColor="#ffffff">
-						<input type="text" name="pname" value="" id="userAction_save_do_logonName" class="bg"/>
+						<input type="text" name="pname" value="${product.pname}" id="userAction_save_do_logonName" class="bg"/>
 					</td>
 					<td width="18%" align="center" bgColor="#f5fafe" class="ta_01">
 						是否热门：
 					</td>
 					<td class="ta_01" bgColor="#ffffff">
 						
-						<select name="is_hot">
+						<select name="is_hot" id="is_hot">
 							<option value="1">是</option>
 							<option value="0">否</option>
 						</select>
@@ -42,13 +63,13 @@
 						市场价格：
 					</td>
 					<td class="ta_01" bgColor="#ffffff">
-						<input type="text" name="market_price" value="" id="userAction_save_do_logonName" class="bg"/>
+						<input type="text" name="market_price" value="${product.market_price}" id="userAction_save_do_logonName" class="bg"/>
 					</td>
 					<td width="18%" align="center" bgColor="#f5fafe" class="ta_01">
 						商城价格：
 					</td>
 					<td class="ta_01" bgColor="#ffffff">
-						<input type="text" name="shop_price" value="" id="userAction_save_do_logonName" class="bg"/>
+						<input type="text" name="shop_price" value="${product.shop_price}" id="userAction_save_do_logonName" class="bg"/>
 					</td>
 				</tr>
 				<tr>
@@ -64,10 +85,10 @@
 						所属分类：
 					</td>
 					<td class="ta_01" bgColor="#ffffff" colspan="3">
-						<select name="categorySecond.csid">
-							<option value="">大型电器</option>
-							<option value="">手机数码</option>
-							<option value="">衣帽箱包</option>
+						<select name="cid" id="cid">
+							<c:forEach items="${categoryList}" var="category">
+								<option value="${category.cid}" >${category.cname}</option>	
+							</c:forEach>
 						</select>
 					</td>
 				</tr>
@@ -76,16 +97,17 @@
 						商品描述：
 					</td>
 					<td class="ta_01" bgColor="#ffffff" colspan="3">
-						<textarea name="pdesc" rows="5" cols="30"></textarea>
+						<textarea name="pdesc" rows="5" cols="30">${product.pdesc}</textarea>
 					</td>
 				</tr>
 				<tr>
 					<td class="ta_01" style="WIDTH: 100%" align="center"
 						bgColor="#f5fafe" colSpan="4">
 						<button type="submit" id="userAction_save_do_submit" value="确定" class="button_ok">
-							&#30830;&#23450;
+							确定
 						</button>
-
+						<!-- 注意表单的跳转，而不是在按钮上写个onclick事件，因为这个按钮的属性是"submit" -->
+						
 						<FONT face="宋体">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</FONT>
 						<button type="reset" value="重置" class="button_cancel">&#37325;&#32622;</button>
 

@@ -4,12 +4,37 @@
 		<meta http-equiv="Content-Language" content="zh-cn">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<LINK href="${pageContext.request.contextPath}/css/Style1.css" type="text/css" rel="stylesheet">
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.11.3.min.js"></script>
 	</HEAD>
 	
 	<body>
+		<script type="text/javascript">
+			$(function(){
+				//页面加载完毕后，去异步获得分类数据
+				 $.post(
+					"${pageContext.request.contextPath}/admin?method=findAllCategory",
+					function(data){
+						//[{"cid":"xxx","cname":"xxx"},{},{}]
+						//data是json，它的长度是data.length，记住了！！！
+						var content = "";
+						for(var i=0;i<data.length;i++){
+							content += "<option value='" + data[i].cid + "'>"+data[i].cname+"</option>";	
+						}
+						$("#cid").html(content);		//放入html命令中
+					},
+					"json"
+							
+				);
+			});
+		</script>
 		<!--  -->
-		<form id="userAction_save_do" name="Form1" action="${pageContext.request.contextPath}/adminProduct_save.action" method="post" enctype="multipart/form-data">
+		<form id="userAction_save_do" name="Form1" action="${pageContext.request.contextPath}/adminAddProduct" method="post" enctype="multipart/form-data">
 			&nbsp;
+			<!-- 
+			<input type="hidden" name="method" value="saveProduct"> 
+			表单是多部分表单，request.getParament()方法没法用，所以不能这么写,只能另外写一个专用servlet
+			-->
+			
 			<table cellSpacing="1" cellPadding="5" width="100%" align="center" bgColor="#eeeeee" style="border: 1px solid #8ba7e3" border="0">
 				<tr>
 					<td class="ta_01" align="center" bgColor="#afd1f3" colSpan="4"
@@ -63,10 +88,10 @@
 						所属分类：
 					</td>
 					<td class="ta_01" bgColor="#ffffff" colspan="3">
-						<select name="categorySecond.csid">
-							<option value="">大型电器</option>
+						<select id="cid" name="cid">
+							<!-- <option value="">大型电器</option>
 							<option value="">手机数码</option>
-							<option value="">衣帽箱包</option>
+							<option value="">衣帽箱包</option> -->
 						</select>
 					</td>
 				</tr>
