@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import com.onlineShop.domain.Category;
 import com.onlineShop.domain.Product;
 import com.onlineShop.service.AdminService;
+import com.onlineShop.utils.BeanFactory;
 import com.onlineShop.utils.CommonUtils;
 
 public class AdminUpdateProductServlet extends HttpServlet {
@@ -83,7 +84,7 @@ public class AdminUpdateProductServlet extends HttpServlet {
 			BeanUtils.populate(product, map);
 			
 			//封装剩下的数据
-			AdminService service = new AdminService();
+			AdminService service = (AdminService) BeanFactory.getBean("adminService");
 			Category category = new Category();
 			category.setCid((String)map.get("cid"));
 			product.setCategory(category);

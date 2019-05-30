@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import com.onlineShop.domain.Category;
 import com.onlineShop.domain.Product;
 import com.onlineShop.service.AdminService;
+import com.onlineShop.utils.BeanFactory;
 import com.onlineShop.utils.CommonUtils;
 
 public class AdminAddProductServlet extends HttpServlet {
@@ -83,7 +84,7 @@ public class AdminAddProductServlet extends HttpServlet {
 			
 			//封装剩下的数据
 			String cid= (String) map.get("cid"); 
-			AdminService service = new AdminService();
+			AdminService service = (AdminService) BeanFactory.getBean("adminService");
 			Category category = service.findCategoryByCid(cid);	//也可以手动创建一个category，只含cid
 			product.setCategory(category);
 			product.setPdate(new Date());
